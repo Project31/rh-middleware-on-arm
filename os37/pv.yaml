@@ -1,13 +1,12 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: registry-pv
+  name: syndesis-pv
   labels:
     type: local
 spec:
-  storageClassName: manual
   capacity:
-    storage: 20Gi
+    storage: 15Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
