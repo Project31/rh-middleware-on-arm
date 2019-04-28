@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: '2019-04-20T00:55:06Z'
+  name: registry-pvc
+  namespace: default
+  resourceVersion: '84879'
+  selfLink: /api/v1/namespaces/kurt/persistentvolumeclaims/registry-pvc
+  uid: f04ca65f-6306-11e9-9cb8-026d3b6140ac
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: "registry-pv"

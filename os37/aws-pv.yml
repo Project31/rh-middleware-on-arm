@@ -1,0 +1,12 @@
+apiVersion: "v1"
+kind: "PersistentVolume"
+metadata:
+  name: "aws-ebs-001" 
+spec:
+  capacity:
+    storage: "15Gi" 
+  accessModes:
+    - "ReadWriteOnce"
+  awsElasticBlockStore: 
+    fsType: "ext4" 
+    volumeID: "vol-0203037877af4b170" 
