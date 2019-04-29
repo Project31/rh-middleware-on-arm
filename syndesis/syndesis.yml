@@ -233,7 +233,7 @@ objects:
     tags:
     - from:
         kind: DockerImage
-        name: docker.io/p31arm64v8/origin-oauth-proxy:latest
+        name: docker.io/p31arm64v8/oauth-proxy:latest
       importPolicy:
         scheduled: true
       name: "latest"
