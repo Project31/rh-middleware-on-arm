@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   creationTimestamp: '2019-04-20T00:55:06Z'
-  name: registry-db
+  name: syndesis-db
   namespace: syndesis
 spec:
   accessModes:

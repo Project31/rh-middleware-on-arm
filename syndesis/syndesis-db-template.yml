@@ -410,6 +410,8 @@ objects:
               memory: ${POSTGRESQL_MEMORY_LIMIT}
             requests:
               memory: ${POSTGRESQL_MEMORY_LIMIT}
+          securityContext:
+            privileged: true
           volumeMounts:
           - mountPath: /var/lib/pgsql/data
             name: syndesis-db-data
@@ -433,7 +435,7 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - postgresql-on-arm
+        - postgresql
         from:
           kind: ImageStreamTag
           name: postgresql-on-arm:9.5

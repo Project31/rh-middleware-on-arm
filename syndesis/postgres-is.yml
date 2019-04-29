@@ -4,7 +4,7 @@ metadata:
   annotations:
     openshift.io/display-name: PostgreSQL_ARM64
   name: postgresql-on-arm
-  namespace: openshift
+  namespace: syndesis
 spec:
   lookupPolicy:
     local: false

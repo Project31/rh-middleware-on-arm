@@ -1,0 +1,7 @@
+oc delete secret syndesis-global-config
+oc delete serviceaccount syndesis-default
+oc delete cm syndesis-sampledb-config syndesis-db-conf
+oc delete service syndesis-db
+oc delete pvc syndesis-db
+oc delete dc syndesis-db
+oc delete template syndesis
