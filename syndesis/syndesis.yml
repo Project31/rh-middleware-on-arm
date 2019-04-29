@@ -777,7 +777,7 @@ objects:
         - postgresql
         from:
           kind: ImageStreamTag
-          name: postgresql:9.5
+          name: postgresql-on-arm:9.5
           namespace: ${POSTGRESQL_IMAGE_STREAM_NAMESPACE}
       type: ImageChange
     # - imageChangeParams:
