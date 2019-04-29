@@ -1,7 +1,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: syndesis-db
+  name: pv001
   labels:
     type: local
 spec:
@@ -10,4 +10,4 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/syndesis-db"
+    path: "/mnt/pv001"

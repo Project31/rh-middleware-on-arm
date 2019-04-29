@@ -9,4 +9,4 @@ oc delete template syndesis
 oc delete route syndesis
 oc delete rolebindings.authorization.openshift.io syndesis:editors
 
-oc delete pv syndesis-db syndesis-meta
+oc delete pv pv001 pv002
