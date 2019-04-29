@@ -857,7 +857,7 @@ objects:
           syndesis.io/type: infrastructure
           syndesis.io/component: syndesis-meta
       spec:
-        serviceAccountName: syndesis-default
+        serviceAccountName: syndesis-server
         containers:
         - name: syndesis-meta
           env:
@@ -1092,7 +1092,7 @@ objects:
         - syndesis-oauthproxy
         from:
           kind: ImageStreamTag
-          name: oauth-proxy:v4.0.0
+          name: oauth-proxy:latest
           namespace: ${IMAGE_STREAM_NAMESPACE}
       type: ImageChange
 
