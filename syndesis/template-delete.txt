@@ -3,8 +3,8 @@ oc delete secret syndesis-oauth-proxy-cookie-secret syndesis-server-secret synde
 oc delete serviceaccount syndesis-default syndesis-server syndesis-integration
 oc delete service syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server
 oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server
-oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config
+oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config syndesis-server-config
 oc delete pvc syndesis-db syndesis-meta
 oc delete template syndesis
 oc delete route syndesis
-
+oc delete rolebindings.authorization.openshift.io syndesis:editors
