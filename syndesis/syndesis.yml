@@ -220,23 +220,23 @@ objects:
       importPolicy:
         scheduled: true
       name: "latest"
-# - apiVersion: image.openshift.io/v1
-#   kind: ImageStream
-#   metadata:
-#     name: oauth-proxy
-#     labels:
-#       app: syndesis
-#       syndesis.io/app: syndesis
-#       syndesis.io/type: infrastructure
-#       syndesis.io/component: syndesis-oauthproxy
-#   spec:
-#     tags:
-#     - from:
-#         kind: DockerImage
-#         name: quay.io/openshift/origin-oauth-proxy:v4.0.0
-#       importPolicy:
-#         scheduled: true
-#       name: "v4.0.0"
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    name: oauth-proxy
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-oauthproxy
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: docker.io/p31arm64v8/origin-oauth-proxy:latest
+      importPolicy:
+        scheduled: true
+      name: "latest"
 #- apiVersion: image.openshift.io/v1
 #  kind: ImageStream
 #  metadata:
@@ -857,7 +857,7 @@ objects:
           syndesis.io/type: infrastructure
           syndesis.io/component: syndesis-meta
       spec:
-        serviceAccountName: syndesis-default
+        serviceAccountName: syndesis-server
         containers:
         - name: syndesis-meta
           env:
