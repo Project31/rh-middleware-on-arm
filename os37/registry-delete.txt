@@ -1,0 +1,4 @@
+oc delete clusterrolebinding registry-registry-role
+oc delete sa registry
+oc delete service docker-registry
+oc delete dc docker-registry

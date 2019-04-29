@@ -1,0 +1,6 @@
+oc new-app --template=syndesis \
+ -p OPENSHIFT_PROJECT=syndesis \
+ -p POSTGRESQL_IMAGE_STREAM_NAMESPACE=syndesis \
+ -p ROUTE_HOSTNAME=syndesis.ec2-3-14-104-120.us-east-2.compute.amazonaws.com \
+ -p OPENSHIFT_MASTER=$(oc whoami --show-server) 
+ 
