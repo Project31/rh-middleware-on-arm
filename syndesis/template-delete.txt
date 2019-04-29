@@ -4,7 +4,6 @@ oc delete serviceaccount syndesis-default syndesis-server syndesis-integration
 oc delete service syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server
 oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server
 oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config
-oc delete service syndesis-db
 oc delete pvc syndesis-db syndesis-meta
 oc delete template syndesis
 oc delete route syndesis
