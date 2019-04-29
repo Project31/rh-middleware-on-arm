@@ -1,3 +1,7 @@
+oc create -f pv-meta.yml 
+oc create -f pv-db.yml 
+oc create -f syndesis.yml 
+
 oc new-app --template=syndesis \
  -p OPENSHIFT_PROJECT=syndesis \
  -p POSTGRESQL_IMAGE_STREAM_NAMESPACE=syndesis \

@@ -1,19 +1,6 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: syndesis-db
-  labels:
-    type: local
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: "/mnt/syndesis-db"
-kind: PersistentVolume
-apiVersion: v1
-metadata:
   name: syndesis-meta
   labels:
     type: local
