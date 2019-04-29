@@ -1,3 +1,4 @@
-oadm registry --config=/etc/origin/master/admin.kubeconfig --images=p31arm64v8/origin-dockerregistry:v3.7.1 --mount-host=/mnt/data
+oc adm policy add-scc-to-user privileged system:serviceaccount:default:registry
 
-oc volume deploymentconfigs/docker-registry --add --name=registry-storage -t pvc --claim-name=aws-ebs-pvc --overwrite
+oadm registry --config=/etc/origin/master/admin.kubeconfig --service-account=registry --images=p31arm64v8/origin-dockerregistry:v3.7.1 --mount-host=/mnt/data
+

@@ -1,0 +1,441 @@
+#
+# Do not edit, this is a generated file.  To regenerate,  run: ./generator/run.sh
+#
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: syndesis
+#
+# Template flavor:
+#
+# Allow localhost refs: false
+# Use docker images: false
+# Syndesis Tag: latest
+# Prometheus Tag: v2.1.0
+# Postgresql Tag: 9.5
+# OAuthProxy Tag: v4.0.0
+#
+  labels:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/type: infrastructure
+parameters:
+- name: ROUTE_HOSTNAME
+  description: The external hostname to access Syndesis
+- name: OPENSHIFT_MASTER
+  description: Public OpenShift master address
+  value: https://localhost:8443
+  required: true
+- name: OPENSHIFT_CONSOLE_URL
+  description: The URL to the OpenShift console
+  displayName: OpenShift Console URL
+- name: OPENSHIFT_PROJECT
+  description: The name of the OpenShift project Syndesis is being deployed into.
+  displayName: OpenShift project to deploy into
+  required: true
+- name: OPENSHIFT_OAUTH_CLIENT_SECRET
+  description: OpenShift OAuth client secret
+  generate: expression
+  from: "[a-zA-Z0-9]{64}"
+  required: true
+- description: Maximum amount of memory the PostgreSQL container can use.
+  displayName: Memory Limit
+  name: POSTGRESQL_MEMORY_LIMIT
+  value: 255Mi
+- description: The OpenShift Namespace where the PostgreSQL ImageStream resides.
+  displayName: Namespace
+  name: POSTGRESQL_IMAGE_STREAM_NAMESPACE
+  value: openshift
+- description: Username for PostgreSQL user that will be used for accessing the database.
+  displayName: PostgreSQL Connection Username
+  name: POSTGRESQL_USER
+  value: syndesis
+- description: Password for the PostgreSQL connection user.
+  displayName: PostgreSQL Connection Password
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
+  name: POSTGRESQL_PASSWORD
+  required: true
+- description: Name of the PostgreSQL database accessed.
+  displayName: PostgreSQL Database Name
+  name: POSTGRESQL_DATABASE
+  required: true
+  value: syndesis
+- description: Volume space available for PostgreSQL data, e.g. 512Mi, 2Gi.
+  displayName: PostgreSQL Volume Capacity
+  name: POSTGRESQL_VOLUME_CAPACITY
+  required: true
+  value: 1Gi
+- description: Password for the PostgreSQL sampledb user.
+  displayName: PostgreSQL SampleDB Connection Password
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
+  name: POSTGRESQL_SAMPLEDB_PASSWORD
+  required: true
+- description: Enables test-support endpoint on backend API
+  displayName: Test Support Enabled
+  name: TEST_SUPPORT_ENABLED
+  required: true
+  value: "false"
+- description: Enables starting up with demo data
+  displayName: Demo Data Enabled
+  name: DEMO_DATA_ENABLED
+  required: true
+  value: "false"
+- description: Registry from where to fetch Syndesis images
+  displayName: Syndesis Image Registry
+  name: SYNDESIS_REGISTRY
+  value: 'docker.io'
+- description: Should deployment of integrations be enabled?
+  displayName: Enable Integration Deployment
+  name: CONTROLLERS_INTEGRATION_ENABLED
+  value: 'true'
+- description: Namespace containing image streams
+  displayName: Image Stream Namespace
+  name: IMAGE_STREAM_NAMESPACE
+  value: ''
+- description: Secret to use to encrypt oauth cookies
+  displayName: OAuth Cookie Secret
+  name: OAUTH_COOKIE_SECRET
+  generate: expression
+  from: '[a-zA-Z0-9]{32}'
+- name: SYNDESIS_ENCRYPT_KEY
+  description: The encryption key used to encrypt/decrypt stored secrets
+  generate: expression
+  from: "[a-zA-Z0-9]{64}"
+  required: true
+- description: Volume space available for Prometheus data, e.g. 512Mi, 2Gi.
+  displayName: Prometheus Volume Capacity
+  name: PROMETHEUS_VOLUME_CAPACITY
+  value: 1Gi
+  required: true
+- description: Maximum amount of memory the Prometheus container can use.
+  displayName: Memory Limit
+  name: PROMETHEUS_MEMORY_LIMIT
+  value: 512Mi
+  required: true
+- description: Volume space available for Meta data, e.g. 512Mi, 2Gi.
+  displayName: Meta Volume Capacity
+  name: META_VOLUME_CAPACITY
+  required: true
+  value: 1Gi
+  required: true
+- description: Maximum amount of memory the syndesis-meta service might use.
+  displayName: Memory Limit
+  name: META_MEMORY_LIMIT
+  value: 512Mi
+  required: true
+- description: Maximum amount of memory the syndesis-server service might use.
+  displayName: Memory Limit
+  name: SERVER_MEMORY_LIMIT
+  value: 800Mi
+  required: true
+- description: Maximum number of integrations single user can create
+  displayName: Maximum number of integrations
+  name: MAX_INTEGRATIONS_PER_USER
+  value: "1"
+  required: true
+- description: Interval for checking the state of the integrations.
+  displayName: Integration state check interval
+  name: INTEGRATION_STATE_CHECK_INTERVAL
+  value: "60"
+  required: true
+- description: Key used to perform authentication of client side stored state.
+  displayName: Client side state authentication key
+  from: '[a-zA-Z0-9]{32}'
+  generate: expression
+  name: CLIENT_STATE_AUTHENTICATION_KEY
+  required: true
+- description: Key used to perform encryption of client side stored state.
+  displayName: Client side state encryption key
+  from: '[a-zA-Z0-9]{32}'
+  generate: expression
+  name: CLIENT_STATE_ENCRYPTION_KEY
+  required: true
+- description: Volume space available for the upgrade process (backup data), e.g. 512Mi, 2Gi.
+  displayName: Upgrade Volume Capacity
+  name: UPGRADE_VOLUME_CAPACITY
+  required: true
+  value: 1Gi
+- description: How to expose services, via OpenShift Route (false) or via 3scale (true)
+  displayName: Expose services via 3scale
+  name: CONTROLLERS_EXPOSE_VIA3SCALE
+  required: true
+  value: 'false'
+message: |-
+  Syndesis is deployed to ${ROUTE_HOSTNAME}.
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: syndesis-global-config
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+  stringData:
+    syndesis: "latest"
+    postgresql: "9.5"
+    oauthproxy: "v4.0.0"
+    prometheus: "v2.1.0"
+    params: |-
+      ROUTE_HOSTNAME=${ROUTE_HOSTNAME}
+      OPENSHIFT_MASTER=${OPENSHIFT_MASTER}
+      OPENSHIFT_PROJECT=${OPENSHIFT_PROJECT}
+      OPENSHIFT_OAUTH_CLIENT_SECRET=${OPENSHIFT_OAUTH_CLIENT_SECRET}
+      POSTGRESQL_MEMORY_LIMIT=${POSTGRESQL_MEMORY_LIMIT}
+      POSTGRESQL_IMAGE_STREAM_NAMESPACE=${POSTGRESQL_IMAGE_STREAM_NAMESPACE}
+      POSTGRESQL_USER=${POSTGRESQL_USER}
+      POSTGRESQL_PASSWORD=${POSTGRESQL_PASSWORD}
+      POSTGRESQL_DATABASE=${POSTGRESQL_DATABASE}
+      POSTGRESQL_VOLUME_CAPACITY=${POSTGRESQL_VOLUME_CAPACITY}
+      POSTGRESQL_SAMPLEDB_PASSWORD=${POSTGRESQL_SAMPLEDB_PASSWORD}
+      TEST_SUPPORT_ENABLED=${TEST_SUPPORT_ENABLED}
+      DEMO_DATA_ENABLED=${DEMO_DATA_ENABLED}
+      SYNDESIS_REGISTRY=${SYNDESIS_REGISTRY}
+      CONTROLLERS_INTEGRATION_ENABLED=${CONTROLLERS_INTEGRATION_ENABLED}
+      IMAGE_STREAM_NAMESPACE=${IMAGE_STREAM_NAMESPACE}
+      OAUTH_COOKIE_SECRET=${OAUTH_COOKIE_SECRET}
+      SYNDESIS_ENCRYPT_KEY=${SYNDESIS_ENCRYPT_KEY}
+      PROMETHEUS_MEMORY_LIMIT=${PROMETHEUS_MEMORY_LIMIT}
+      PROMETHEUS_VOLUME_CAPACITY=${PROMETHEUS_VOLUME_CAPACITY}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: syndesis-default
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-infrastructure
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-db
+    name: syndesis-sampledb-config
+  data:
+    add-sample-db.sh: |
+      #!/bin/bash
+      until bash -c "psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'"; do
+        echo "Waiting for Postgres server..."
+        sleep 1
+      done
+      echo "***** creating sampledb"
+      psql <<EOF
+        CREATE DATABASE sampledb;
+        CREATE USER sampledb WITH PASSWORD '$POSTGRESQL_SAMPLEDB_PASSWORD';
+        GRANT ALL PRIVILEGES ON DATABASE sampledb to sampledb;
+      EOF
+      psql -d sampledb -U sampledb <<'EOF'
+        CREATE TABLE IF NOT EXISTS contact (first_name VARCHAR, last_name VARCHAR, company VARCHAR, lead_source VARCHAR, create_date DATE);
+        INSERT INTO contact VALUES ('Joe','Jackson','Red Hat','db',current_timestamp);
+        CREATE TABLE IF NOT EXISTS todo (id SERIAL PRIMARY KEY, task VARCHAR, completed INTEGER);
+        CREATE OR REPLACE FUNCTION add_lead(
+          first_and_last_name varchar,
+          company varchar,
+          phone varchar,
+          email varchar,
+          lead_source varchar,
+          lead_status varchar,
+          rating varchar)
+
+          RETURNS void
+          LANGUAGE 'plpgsql'
+
+        AS $BODY$
+        DECLARE
+          task varchar;
+        BEGIN
+          task := concat(lead_status || ' ', 'Lead: Please contact ', first_and_last_name, ' from ' || company, ' via phone: ' || phone, ' via email: ' || email, '. ', 'Lead is from ' || lead_source, '. Rating: ' || rating, '.');
+          insert into todo(task,completed) VALUES (task,0);
+        END;
+        $BODY$;
+
+        CREATE OR REPLACE FUNCTION create_lead(
+          OUT first_name text,
+          OUT last_name text,
+          OUT company text,
+          OUT lead_source text)
+          RETURNS SETOF record
+          AS
+          $$
+            SELECT first_name, last_name, company, lead_source
+            FROM contact;
+          $$
+           LANGUAGE 'sql' VOLATILE;
+      EOF
+
+      echo "***** sampledb created"
+    postStart.sh: |
+      #!/bin/bash
+      /var/lib/pgsql/sampledb/add-sample-db.sh &>  /proc/1/fd/1
+
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-db
+    name: syndesis-db-conf
+  data:
+    syndesis-postgresql.conf: |
+      log_autovacuum_min_duration = 0
+      log_line_prefix = '%t %a %i %e %c '
+      logging_collector = off
+      autovacuum_max_workers = 6
+      autovacuum_naptime = 15s
+      autovacuum_vacuum_threshold = 25
+      autovacuum_vacuum_scale_factor = 0.1
+      autovacuum_analyze_threshold = 10
+      autovacuum_analyze_scale_factor = 0.05
+      autovacuum_vacuum_cost_delay = 10ms
+      autovacuum_vacuum_cost_limit = 2000
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: syndesis-db
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-db
+  spec:
+    ports:
+    - name: postgresql
+      nodePort: 0
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+    selector:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/component: syndesis-db
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: syndesis-db
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-db
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${POSTGRESQL_VOLUME_CAPACITY}
+
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    name: syndesis-db
+    labels:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/type: infrastructure
+      syndesis.io/component: syndesis-db
+  spec:
+    replicas: 1
+    selector:
+      app: syndesis
+      syndesis.io/app: syndesis
+      syndesis.io/component: syndesis-db
+    strategy:
+      type: Recreate
+      resources:
+        limits:
+          memory: "256Mi"
+        requests:
+          memory: "20Mi"
+    template:
+      metadata:
+        labels:
+          app: syndesis
+          syndesis.io/app: syndesis
+          syndesis.io/component: syndesis-db
+      spec:
+        serviceAccountName: syndesis-default
+        containers:
+        - capabilities: {}
+          env:
+          - name: POSTGRESQL_USER
+            value: ${POSTGRESQL_USER}
+          - name: POSTGRESQL_PASSWORD
+            value: ${POSTGRESQL_PASSWORD}
+          - name: POSTGRESQL_DATABASE
+            value: ${POSTGRESQL_DATABASE}
+          - name: POSTGRESQL_SAMPLEDB_PASSWORD
+            value: ${POSTGRESQL_SAMPLEDB_PASSWORD}
+          image: 'docker.io'
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - /var/lib/pgsql/sampledb/postStart.sh
+          livenessProbe:
+            initialDelaySeconds: 60
+            tcpSocket:
+              port: 5432
+          name: postgresql
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -i
+              - -c
+              - psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'
+            initialDelaySeconds: 5
+          # DB QoS class is "Guaranteed" (requests == limits)
+          # Note: On OSO there is no Guaranteed class, its always burstable
+          resources:
+            limits:
+              memory: ${POSTGRESQL_MEMORY_LIMIT}
+            requests:
+              memory: ${POSTGRESQL_MEMORY_LIMIT}
+          volumeMounts:
+          - mountPath: /var/lib/pgsql/data
+            name: syndesis-db-data
+          - mountPath: /var/lib/pgsql/sampledb
+            name: syndesis-sampledb-config
+          - mountPath: /opt/app-root/src/postgresql-cfg/
+            name: syndesis-db-conf
+        volumes:
+        - name: syndesis-db-data
+          persistentVolumeClaim:
+            claimName: syndesis-db
+        - configMap:
+            defaultMode: 511
+            name: syndesis-sampledb-config
+          name: syndesis-sampledb-config
+        - configMap:
+            name: syndesis-db-conf
+          name: syndesis-db-conf
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - postgresql-on-arm
+        from:
+          kind: ImageStreamTag
+          name: postgresql-on-arm:9.5
+          namespace: ${POSTGRESQL_IMAGE_STREAM_NAMESPACE}
+      type: ImageChange
