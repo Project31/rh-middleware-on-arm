@@ -857,7 +857,7 @@ objects:
           syndesis.io/type: infrastructure
           syndesis.io/component: syndesis-meta
       spec:
-        serviceAccountName: syndesis-server
+        serviceAccountName: syndesis-default
         containers:
         - name: syndesis-meta
           env:
