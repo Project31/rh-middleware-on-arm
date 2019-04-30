@@ -2,7 +2,7 @@ oc delete is syndesis-server syndesis-ui syndesis-meta syndesis-s2i oauth-proxy 
 oc delete secret syndesis-oauth-proxy-cookie-secret syndesis-server-secret syndesis-global-config
 oc delete serviceaccount syndesis-default syndesis-server syndesis-integration
 oc delete service syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo
-oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server
+oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo
 oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config syndesis-server-config
 oc delete pvc syndesis-db syndesis-meta
 oc delete template syndesis
