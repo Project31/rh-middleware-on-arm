@@ -1331,59 +1331,66 @@ objects:
         maxDeploymentsPerUser: ${MAX_INTEGRATIONS_PER_USER}
         integrationStateCheckInterval: ${INTEGRATION_STATE_CHECK_INTERVAL}
 
-# - apiVersion: v1
-#   kind: Service
-#   metadata:
-#     labels:
-#       app: syndesis
-#       syndesis.io/app: todo
-#       syndesis.io/component: todo
-#     name: todo
-#   spec:
-#     ports:
-#     - port: 8080
-#       protocol: TCP
-#       targetPort: 8080
-#     selector:
-#       app: syndesis
-#       syndesis.io/app: todo
-#       syndesis.io/component: todo
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: todo
+      syndesis.io/component: todo
+    name: todo
+  spec:
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: syndesis
+      syndesis.io/app: todo
+      syndesis.io/component: todo
 
-# - apiVersion: route.openshift.io/v1
-#   kind: Route
-#   metadata:
-#     labels:
-#       app: syndesis
-#       syndesis.io/app: todo
-#       syndesis.io/component: todo
-#     name: todo
-#   spec:
-#     host: todo-${ROUTE_HOSTNAME}
-#     path: /
-#     port:
-#       targetPort: 8080
-#     tls:
-#       insecureEdgeTerminationPolicy: Allow
-#       termination: edge
-#     to:
-#       kind: Service
-#       name: todo
-#       weight: 100
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: todo
+      syndesis.io/component: todo
+    name: todo
+  spec:
+    host: todo-${ROUTE_HOSTNAME}
+    path: /
+    port:
+      targetPort: 8080
+    tls:
+      insecureEdgeTerminationPolicy: Allow
+      termination: edge
+    to:
+      kind: Service
+      name: todo
+      weight: 100
 
-# - apiVersion: image.openshift.io/v1
-#   kind: ImageStream
-#   metadata:
-#     labels:
-#       app: syndesis
-#       syndesis.io/app: todo
-#     name: todo
-#   spec:
-#     lookupPolicy:
-#       local: false
-#   status:
-#     tags:
-#       - items:
-#         tag: latest
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: todo
+    name: todo
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - from:
+        kind: DockerImage
+        name: 'p31arm64v8/syndesis-todo:latest'
+      importPolicy:
+        scheduled: true
+      name: latest
+  status:
+    tags:
+      - items:
+        tag: latest
 
 # - apiVersion: build.openshift.io/v1
 #   kind: BuildConfig
@@ -1416,75 +1423,73 @@ objects:
 #       - imageChange:
 #         type: ImageChange
 
-#  - apiVersion: apps.openshift.io/v1
-  # kind: DeploymentConfig
-  # metadata:
-  #   labels:
-  #     app: syndesis
-  #     syndesis.io/app: todo
-  #   name: todo
-  # spec:
-  #   replicas: 1
-  #   selector:
-  #     app: syndesis
-  #     syndesis.io/app: todo
-  #     syndesis.io/component: todo
-  #   strategy:
-  #     resources:
-  #       limits:
-  #         memory: "256Mi"
-  #       requests:
-  #         memory: "20Mi"
-  #     type: Recreate
-  #   template:
-  #     metadata:
-  #       annotations:
-  #         openshift.io/container.todo.image.entrypoint: '["container-entrypoint","/bin/sh","-c","$STI_SCRIPTS_PATH/usage"]'
-  #       creationTimestamp: null
-  #       labels:
-  #         app: syndesis
-  #         syndesis.io/app: todo
-  #         syndesis.io/component: todo
-  #     spec:
-  #       containers:
-  #         - env:
-  #             - name: TODO_DB_SERVER
-  #               value: syndesis-db
-  #             - name: TODO_DB_NAME
-  #               value: sampledb
-  #             - name: TODO_DB_USER
-  #               value: sampledb
-  #             - name: TODO_DB_PASS
-  #               value: ${POSTGRESQL_SAMPLEDB_PASSWORD}
-  #           imagePullPolicy: Always
-  #           name: todo
-  #           image: ' '
-  #           resources:
-  #             limits:
-  #               memory: 256Mi
-  #             requests:
-  #               memory: 256Mi
-  #           ports:
-  #             - containerPort: 8080
-  #               name: http
-  #           terminationMessagePath: /dev/termination-log
-  #           terminationMessagePolicy: File
-  #       dnsPolicy: ClusterFirst
-  #       restartPolicy: Always
-  #       schedulerName: default-scheduler
-  #       securityContext: {}
-  #       terminationGracePeriodSeconds: 30
-  #   test: false
-  #   triggers:
-  #     - type: ConfigChange
-  #     - imageChangeParams:
-  #         automatic: true
-  #         containerNames:
-  #           - todo
-  #         from:
-  #           kind: ImageStreamTag
-  #           name: todo:latest
-  #       type: ImageChange
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: syndesis
+      syndesis.io/app: todo
+    name: todo
+  spec:
+    replicas: 1
+    selector:
+      app: syndesis
+      syndesis.io/app: todo
+      syndesis.io/component: todo
+    strategy:
+      resources:
+        limits:
+          memory: "256Mi"
+        requests:
+          memory: "20Mi"
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: syndesis
+          syndesis.io/app: todo
+          syndesis.io/component: todo
+      spec:
+        containers:
+          - env:
+              - name: TODO_DB_SERVER
+                value: syndesis-db
+              - name: TODO_DB_NAME
+                value: sampledb
+              - name: TODO_DB_USER
+                value: sampledb
+              - name: TODO_DB_PASS
+                value: ${POSTGRESQL_SAMPLEDB_PASSWORD}
+            imagePullPolicy: Always
+            name: todo
+            image: ' '
+            resources:
+              limits:
+                memory: 256Mi
+              requests:
+                memory: 256Mi
+            ports:
+              - containerPort: 8080
+                name: http
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - todo
+          from:
+            kind: ImageStreamTag
+            name: todo:latest
+        type: ImageChange
 - apiVersion: authorization.openshift.io/v1
   kind: RoleBinding
   metadata:
