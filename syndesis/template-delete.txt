@@ -10,3 +10,5 @@ oc delete route syndesis
 oc delete rolebindings.authorization.openshift.io syndesis:editors
 
 oc delete pv pv001 pv002
+rm -fr /mnt/pv001/*
+rm -fr /mnt/pv002/*

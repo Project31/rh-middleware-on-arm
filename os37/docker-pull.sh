@@ -13,5 +13,6 @@ docker tag 15b6426779b1 docker.io/openshift/origin-docker-builder:v3.7.1
 docker pull p31arm64v8/origin-dockerregistry:v3.7.1
 docker pull p31arm64v8/origin-deployer:v3.7.1
 docker tag bc23ac58970f docker.io/openshift/origin-deployer:v3.7.1
-
+docker pull p31arm64v8/origin-sti-builder:v3.7.1
+docker tag 689a7a8fbbdd openshift/origin-sti-builder:v3.7.1
 

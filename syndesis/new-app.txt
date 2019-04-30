@@ -5,7 +5,7 @@ oc create -f syndesis.yml
 oc new-app --template=syndesis \
  -p OPENSHIFT_PROJECT=syndesis \
  -p POSTGRESQL_IMAGE_STREAM_NAMESPACE=syndesis \
- -p ROUTE_HOSTNAME=syndesis.ec2-3-14-104-120.us-east-2.compute.amazonaws.com \
+ -p ROUTE_HOSTNAME=syndesis.$(curl http://169.254.169.254/latest/meta-data/public-ipv4).nip.io \
  -p OPENSHIFT_MASTER=$(oc whoami --show-server) \
  -p OPENSHIFT_OAUTH_CLIENT_SECRET=$(oc sa get-token syndesis-oauth-client) \
  -p SAR_PROJECT=$(oc project -q)
