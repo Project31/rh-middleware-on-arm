@@ -15,4 +15,6 @@ docker pull p31arm64v8/origin-deployer:v3.7.1
 docker tag bc23ac58970f docker.io/openshift/origin-deployer:v3.7.1
 docker pull p31arm64v8/origin-sti-builder:v3.7.1
 docker tag 689a7a8fbbdd openshift/origin-sti-builder:v3.7.1
+docker pull p31arm64v8/origin-haproxy-router:v3.7.1
+docker tag 03c6bbe67dca openshift/origin-haproxy-router:v3.7.1
 
