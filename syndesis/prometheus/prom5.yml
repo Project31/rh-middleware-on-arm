@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: syndesis-prometheus
+  labels:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/type: infrastructure
+    syndesis.io/component: syndesis-prometheus
+spec:
+  ports:
+  - name: prometheus
+    port: 80
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/component: syndesis-prometheus
+status:
+  loadBalancer: {}

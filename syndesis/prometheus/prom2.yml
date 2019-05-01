@@ -1,0 +1,13 @@
+apiVersion: authorization.openshift.io/v1
+kind: RoleBinding
+metadata:
+  name: syndesis:viewers
+  labels:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/type: infrastructure
+roleRef:
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: syndesis-default

@@ -1,0 +1,80 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: syndesis-prometheus
+  labels:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/type: infrastructure
+    syndesis.io/component: syndesis-prometheus
+spec:
+  replicas: 1
+  selector:
+    app: syndesis
+    syndesis.io/app: syndesis
+    syndesis.io/component: syndesis-prometheus
+  strategy:
+    type: Recreate
+    resources:
+      limits:
+        memory: "256Mi"
+      requests:
+        memory: "20Mi"
+  template:
+    metadata:
+      labels:
+        app: syndesis
+        syndesis.io/app: syndesis
+        syndesis.io/type: infrastructure
+        syndesis.io/component: syndesis-prometheus
+    spec:
+      serviceAccountName: syndesis-default
+      containers:
+      - name: prometheus
+        image: ' '
+        imagePullPolicy: IfNotPresent
+        args:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.retention=30d'
+        livenessProbe:
+          httpGet:
+            port: 9090
+          initialDelaySeconds: 60
+        ports:
+        - containerPort: 9090
+        readinessProbe:
+          httpGet:
+            port: 9090
+          initialDelaySeconds: 30
+        # DB QoS class is "Guaranteed" (requests == limits)
+        # Note: On OSO there is no Guaranteed class, its always burstable
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: syndesis-prometheus-data
+          mountPath: /prometheus
+        - name: syndesis-prometheus-config
+          mountPath: /etc/prometheus
+      volumes:
+      - name: syndesis-prometheus-data
+        persistentVolumeClaim:
+          claimName: syndesis-prometheus
+      - name: syndesis-prometheus-config
+        configMap:
+          name: syndesis-prometheus-config
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - prometheus
+      from:
+        kind: ImageStreamTag
+        name: prometheus:v2.2.0
+        namespace: syndesis
+    type: ImageChange
+  - type: ConfigChange
