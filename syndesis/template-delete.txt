@@ -1,14 +1,15 @@
-oc delete is syndesis-server syndesis-ui syndesis-meta syndesis-s2i oauth-proxy todo
+oc delete is syndesis-server syndesis-ui syndesis-meta syndesis-s2i oauth-proxy todo prometheus
 oc delete secret syndesis-oauth-proxy-cookie-secret syndesis-server-secret syndesis-global-config
-oc delete serviceaccount syndesis-default syndesis-server syndesis-integration
-oc delete service syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo
-oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo
-oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config syndesis-server-config
-oc delete pvc syndesis-db syndesis-meta
+oc delete serviceaccount syndesis-default syndesis-server syndesis-integration syndesis-prometheus
+oc delete service syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo syndesis-prometheus
+oc delete dc syndesis-ui syndesis-db syndesis-meta syndesis-oauthproxy syndesis-server todo syndesis-prometheus
+oc delete cm syndesis-ui-config syndesis-sampledb-config syndesis-db-conf syndesis-meta-config syndesis-server-config syndesis-prometheus-config
+oc delete pvc syndesis-db syndesis-meta syndesis-prometheus
 oc delete template syndesis
 oc delete route syndesis todo
-oc delete rolebindings.authorization.openshift.io syndesis:editors
+oc delete rolebindings.authorization.openshift.io syndesis:editors syndesis:viewers 
 
-oc delete pv pv001 pv002
+oc delete pv pv001 pv002 pv003
 rm -fr /mnt/pv001/*
 rm -fr /mnt/pv002/*
+rm -fr /mnt/pv003/*

@@ -1,5 +1,6 @@
 oc create -f pv001.yml 
 oc create -f pv002.yml 
+oc create -f pv003.yml
 oc create -f syndesis.yml 
 
 oc new-app --template=syndesis \
