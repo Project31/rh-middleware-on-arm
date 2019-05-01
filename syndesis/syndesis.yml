@@ -137,7 +137,7 @@ parameters:
 - description: Maximum number of integrations single user can create
   displayName: Maximum number of integrations
   name: MAX_INTEGRATIONS_PER_USER
-  value: "1"
+  value: "10"
   required: true
 - description: Interval for checking the state of the integrations.
   displayName: Integration state check interval
