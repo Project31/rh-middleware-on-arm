@@ -1,7 +1,7 @@
 There is a release candidate for OpenShift 3.7 that can be found at 
 https://cbs.centos.org/repos/paas7-openshift-multiarch-candidate/aarch64/os
 
-You will need to add this repo using a Lentos-Origin.repo
+You will need to add this repo using a Centos-Origin.repo
 
 ```
 [openshift]
